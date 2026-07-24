@@ -1,0 +1,15 @@
+name: Scheduled API Tests
+
+# '*/10 * * * *' signifie "Toutes les 10 minutes"
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  # Le workflow_dispatch permet aussi de le lancer à la main depuis Github si besoin
+  workflow_dispatch:
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Déclencher le run sur PythonAnywhere
+        run: curl -s https://sigala.pythonanywhere.com/run
