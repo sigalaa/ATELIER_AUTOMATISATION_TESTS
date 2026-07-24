@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>QA Dashboard - Agify API</title>
+    <!-- Bootstrap CSS pour un design propre -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>📊 Dashboard Qualité (QoS)</h1>
+        <button id="btn-run" class="btn btn-primary" onclick="launchRun()">🚀 Lancer un Test</button>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Historique des 20 derniers Runs (Agify API)</h5>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Date / Heure</th>
+                            <th>Succès</th>
+                            <th>Échecs</th>
+                            <th>Taux d'erreur</th>
+                            <th>Latence Moy.</th>
+                            <th>Latence P95</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for run in runs %}
+                        <tr>
+                            <!-- Affichage dynamique géré par Flask (Jinja2) -->
+                            <td>{{ run.timestamp[:19].replace('T', ' ') }}</td>
+                            <td><span class="badge bg-success">{{ run.passed }}</span></td>
+                            <td>
+                                <span class="badge {% if run.failed > 0 %}bg-danger{% else %}bg-secondary{% endif %}">
+                                    {{ run.failed }}
+                                </span>
+                            </td>
+                            <td>{{ (run.error_rate * 100) | round(1) }} %</td>
+                            <td>{{ run.latency_avg | int }} ms</td>
+                            <td>{{ run.latency_p95 | int }} ms</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">Aucun test n'a encore été exécuté. Cliquez sur 'Lancer un Test' !</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Petit script JavaScript pour lier le bouton à l'URL /run de Flask
+function launchRun() {
+    const btn = document.getElementById('btn-run');
+    btn.disabled = true;
+    btn.innerHTML = "⏳ Exécution en cours...";
+    
+    fetch('/run')
+        .then(response => response.json())
+        .then(data => {
+            window.location.reload(); // Recharge la page pour afficher le nouveau tableau
+        })
+        .catch(error => {
+            alert("Erreur réseau lors de l'exécution.");
+            btn.disabled = false;
+            btn.innerHTML = "🚀 Lancer un Test";
+        });
+}
+</script>
+</body>
+</html>
