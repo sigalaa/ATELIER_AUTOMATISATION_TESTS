@@ -1,13 +1,23 @@
 # API Choice
 
-- Étudiant :
-- API choisie :
-- URL base :
-- Documentation officielle / README :
-- Auth : None / API Key / OAuth
+- Étudiant : El-Ghali LEMRHARI
+- API choisie : Agify
+- URL base : https://api.agify.io
+- Documentation officielle / README : https://agify.io/
+- Auth : None
 - Endpoints testés :
-  - GET ...
-  - GET ...
+  - GET /?name={prenom} (requête valide)
+  - GET / (requête non valide)
 - Hypothèses de contrat (champs attendus, types, codes) :
-- Limites / rate limiting connu :
-- Risques (instabilité, downtime, CORS, etc.) :
+  - Cas Valide (Ex: /?name=michael) :
+    - Code HTTP : 200 OK
+    - Content-Type : application/json
+    - Schéma JSON attendu :
+      - count : Integer 
+      - name : String
+      - age : Integer 
+  - Cas d'erreur (Ex: requête sans paramètre 'name') :
+    - Code HTTP : 422 Unprocessable Entity (L'API exige le paramètre)
+    - Schéma JSON attendu : Un champ error contenant un String explicatif.
+- Limites / rate limiting connu : Limité à 100 requêtes par jour sans clé API
+- Risques (instabilité, downtime, CORS, etc.) : Risque d'erreur 429 si les tests sont lancés en boucle infinie
